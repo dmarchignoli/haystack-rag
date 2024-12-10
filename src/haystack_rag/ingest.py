@@ -28,9 +28,9 @@ class ByteStreamMaterializer():
           self._out_dir.mkdir(parents=True)
     
     @component.output_types(paths=List[Path])
-    def run(self, bstreams: List[ByteStream]):
+    def run(self, streams: List[ByteStream]):
         paths=[]
-        for bstream in bstreams:
+        for bstream in streams:
             url = bstream.meta['url']
             parsed_url = urlparse(url)
             filename = os.path.basename(parsed_url.path)
@@ -41,23 +41,3 @@ class ByteStreamMaterializer():
             bstream.to_file(filepath)
             paths.append(filepath)
         return {'paths': paths}
-
-# @component
-# class UnstructuredConverter(UnstructuredFileConverter):
-
-#     def __init__(self, 
-#                 api_url: str = UNSTRUCTURED_HOSTED_API_URL,
-#                 api_key: Optional[Secret] = Secret.from_env_var("UNSTRUCTURED_API_KEY", strict=False),
-#                 document_creation_mode: Literal[
-#                     "one-doc-per-file", "one-doc-per-page", "one-doc-per-element"
-#                 ] = "one-doc-per-file",
-#                 separator: str = "\n\n",
-#                 unstructured_kwargs: Optional[Dict[str, Any]] = None,
-#                 progress_bar: bool = True,
-#                  **kwargs):
-#         super().__init__(api_url=api_url, api_key=api_key, document_creation_mode=document_creation_mode,
-#                         separator=separator, unstructured_kwargs=unstructured_kwargs,
-#                         progress_bar=progress_bar,
-#                         **kwargs)
-#         self.cache_dir = os.path.join(os.getenv("HOME"), '.cache/haystack')
-#         os.mkdir(self.cache_dir)

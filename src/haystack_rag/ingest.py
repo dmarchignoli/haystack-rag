@@ -22,9 +22,10 @@ class ByteStreamMaterializer():
     """
     Saves the byte streams in input to filesystem returns the file paths
     """
-    def __init__(self, out_dir: Optional[os.PathLike] = None):
+    def __init__(self, out_dir: Optional[Path] = None):
         if out_dir is None:
             out_dir = os.path.join(os.getenv('HOME'), CACHE_SUBDIR)
+        out_dir.mkdir(parents=True)
         self.out_dir = out_dir
     
     @component.output_types(paths=List[Path])

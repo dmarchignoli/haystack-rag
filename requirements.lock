@@ -20,6 +20,8 @@ backoff==2.2.1
     # via unstructured
 beautifulsoup4==4.12.3
     # via unstructured
+cachetools==5.5.0
+    # via google-auth
 certifi==2024.8.30
     # via httpcore
     # via httpx
@@ -55,6 +57,24 @@ filetype==1.2.0
 fsspec==2024.10.0
     # via huggingface-hub
     # via torch
+google-api-core==2.24.0
+    # via google-cloud-core
+    # via google-cloud-storage
+google-auth==2.36.0
+    # via google-api-core
+    # via google-cloud-core
+    # via google-cloud-storage
+google-cloud-core==2.4.1
+    # via google-cloud-storage
+google-cloud-storage==2.19.0
+    # via haystack-rag
+google-crc32c==1.6.0
+    # via google-cloud-storage
+    # via google-resumable-media
+google-resumable-media==2.7.2
+    # via google-cloud-storage
+googleapis-common-protos==1.66.0
+    # via google-api-core
 h11==0.14.0
     # via httpcore
 haystack-ai==2.7.0
@@ -165,8 +185,19 @@ pillow==11.0.0
     # via sentence-transformers
 posthog==3.7.4
     # via haystack-ai
+proto-plus==1.25.0
+    # via google-api-core
+protobuf==5.29.1
+    # via google-api-core
+    # via googleapis-common-protos
+    # via proto-plus
 psutil==6.1.0
     # via unstructured-fileconverter-haystack
+pyasn1==0.6.1
+    # via pyasn1-modules
+    # via rsa
+pyasn1-modules==0.4.1
+    # via google-auth
 pycparser==2.22
     # via cffi
 pydantic==2.10.2
@@ -197,6 +228,8 @@ regex==2024.11.6
     # via nltk
     # via transformers
 requests==2.32.3
+    # via google-api-core
+    # via google-cloud-storage
     # via haystack-ai
     # via huggingface-hub
     # via posthog
@@ -206,6 +239,8 @@ requests==2.32.3
     # via unstructured-client
 requests-toolbelt==1.0.0
     # via unstructured-client
+rsa==4.9
+    # via google-auth
 safetensors==0.4.5
     # via transformers
 scikit-learn==1.5.2

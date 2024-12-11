@@ -1,18 +1,9 @@
-
 import os
 from typing import List, Optional
 from haystack import component
 from haystack.dataclasses import ByteStream
 from pathlib import Path
 from urllib.parse import urlparse
-#from haystack.components.fetchers import LinkContentFetcher
-#from haystack_integrations.components.converters.unstructured import UnstructuredFileConverter, UNSTRUCTURED_HOSTED_API_URL
-
-BASE_DIR='.'
-
-def load_library_urls():
-    with open(os.path.join(BASE_DIR, 'resources/library_urls.txt')) as f:
-        return [x.strip() for x in f.readlines()]
 
 CACHE_SUBDIR = '.cache/haystack'
 

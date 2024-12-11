@@ -1,5 +1,6 @@
-from google.cloud import storage
 from typing import List, Dict, Any
+from google.cloud import storage
+from haystack.dataclasses import Document
 import json
 import re
 
@@ -15,11 +16,17 @@ class GCSDocumentStore:
         regex_pattern = self._blob_name_pattern.replace("{id}", r"(?P<id>[^/]+)")
         self._blob_pattern = re.compile(regex_pattern)
 
-    def _get_blob_name(self, doc_id: str) -> str:
-        return self._blob_name_pattern.format(id=doc_id)
+    def _get_blob_name(self, doc_key: str) -> str:
+        return self._blob_name_pattern.format(id=doc_key)
 
     def _is_document_blob(self, blob_name: str) -> bool:
         return self._blob_pattern.match(blob_name) is not None
+    
+    def _document_key(doc: Document) -> str:
+        doc_key = doc.meta['file_path']
+        if not doc_key:
+            raise ValueError("Document must have an 'id' field")
+        return doc_key
 
     def count_documents(self, **kwargs) -> int:
         count = sum(1 for blob in self._bucket.list_blobs() if self._is_document_blob(blob.name))
@@ -36,16 +43,14 @@ class GCSDocumentStore:
 
     def write_documents(self, documents: List[Dict[str, Any]], **kwargs) -> None:
         for doc in documents:
-            doc_id = doc.get('id')
-            if not doc_id:
-                raise ValueError("Document must have an 'id' field")
-            blob_name = self._get_blob_name(doc_id)
+            doc_key = self._document_key(doc)
+            blob_name = self._get_blob_name(doc_key)
             blob = self._bucket.blob(blob_name)
             blob.upload_from_string(json.dumps(doc))
 
-    def delete_documents(self, ids: List[str], **kwargs) -> None:
-        for doc_id in ids:
-            blob_name = self._get_blob_name(doc_id)
+    def delete_documents(self, doc_keys: List[str], **kwargs) -> None:
+        for doc_key in doc_keys:
+            blob_name = self._get_blob_name(doc_key)
             blob = self._bucket.blob(blob_name)
             if blob.exists():
                 blob.delete()

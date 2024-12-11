@@ -13,8 +13,10 @@ class ByteStreamMaterializer():
     Saves the byte streams in input to filesystem returns the file paths
     """
     def __init__(self, out_dir: Optional[Path] = None):
+        home = os.getenv('HOME')
+        assert home is not None
         self._out_dir = out_dir if out_dir is not None \
-          else Path(os.getenv('HOME')).joinpath(CACHE_SUBDIR)
+          else Path(home).joinpath(CACHE_SUBDIR)
         if not self._out_dir.exists():
           self._out_dir.mkdir(parents=True)
     

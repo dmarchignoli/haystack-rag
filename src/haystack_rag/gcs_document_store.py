@@ -33,12 +33,20 @@ class GCSDocumentStore:
         return count
 
     def filter_documents(self, filters: dict[str, Any], **kwargs) -> list[Document]:
-        ffield = filters['field'] if filters else None
-        fvalue = filters['value'] if filters else None
-        if filters and filters['operator'] != '==':
-            raise ValueError('usupported operator '+filters['operator'])
+        ffield = fvalue = None
         documents = []
-        for blob in self._bucket.list_blobs():
+        if len(filters) > 0:
+            ffield = filters['field']
+            fvalue = filters['value']
+            if filters['operator'] != '==':
+                raise ValueError('usupported operator '+filters['operator'])
+        if ffield == 'url':
+            blob_name = self._get_blob_name(url_basename(fvalue))
+            blob = self._bucket.get_blob(blob_name)
+            candidates = [] if blob is None else [blob]
+        else:
+            candidates = self._bucket.list_blobs() if blob is None else [blob]
+        for blob in candidate:
             if self._is_document_blob(blob.name):
                 doc_dict = json.loads(blob.download_as_string())
                 if ffield is None or doc_dict.get(ffield) == fvalue:

@@ -32,13 +32,13 @@ class GCSDocumentStore:
         count = sum(1 for blob in self._bucket.list_blobs() if self._is_document_blob(blob.name))
         return count
 
-    def filter_documents(self, filters: dict[str, Any], **kwargs) -> list[dict[str, Any]]:
+    def filter_documents(self, filters: dict[str, Any], **kwargs) -> list[Document]:
         documents = []
         for blob in self._bucket.list_blobs():
             if self._is_document_blob(blob.name):
                 doc_dict = json.loads(blob.download_as_string())
                 if all(doc_dict.get(k) == v for k, v in filters.items()):
-                    documents.append(doc_dict)
+                    documents.append(Document.from_dict(doc_dict))
         return documents
 
     def write_documents(self, documents: list[Document], **kwargs) -> None:
@@ -46,7 +46,7 @@ class GCSDocumentStore:
             doc_key = self._document_key(doc)
             blob_name = self._get_blob_name(doc_key)
             blob = self._bucket.blob(blob_name)
-            blob.upload_from_string(json.dumps(doc))
+            blob.upload_from_string(json.dumps(doc.to_dict()))
 
     def delete_documents(self, doc_keys: list[str], **kwargs) -> None:
         for doc_key in doc_keys:

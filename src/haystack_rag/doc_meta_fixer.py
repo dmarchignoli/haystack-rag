@@ -14,9 +14,9 @@ class DocMetaFixer():
         pass
     
     @component.output_types(documents=list[Document])
-    def run(self, documents: list[Document], origin_urls: list[str]) -> list[Document]:
+    def run(self, documents: list[Document], origin_urls: list[str]) -> dict[str, list[Document]]:
         url_by_path = { url_basename(x): x for x in origin_urls }
         for doc in documents:
             url = url_by_path[os.path.basename(doc.meta['file_path'])]
             doc.meta['url'] = url
-        return documents
+        return {'documents': documents}

@@ -1,9 +1,9 @@
 import os
-from typing import List, Optional
+from typing import Optional
 from haystack import component
 from haystack.dataclasses import ByteStream
 from pathlib import Path
-from urllib.parse import urlparse
+from .utils import url_basename
 
 CACHE_SUBDIR = '.cache/haystack'
 
@@ -20,15 +20,11 @@ class ByteStreamMaterializer():
         if not self._out_dir.exists():
           self._out_dir.mkdir(parents=True)
     
-    @component.output_types(paths=List[Path])
-    def run(self, streams: List[ByteStream]):
+    @component.output_types(paths=list[Path])
+    def run(self, streams: list[ByteStream]) -> dict[str, list[Path]]:
         paths=[]
         for bstream in streams:
-            url = bstream.meta['url']
-            parsed_url = urlparse(url)
-            filename = os.path.basename(parsed_url.path)
-            if not filename:  # Handle cases where there's no filename in the URL
-                raise ValueError("Missing base name in {url}")
+            filename = url_basename(bstream.meta['url'])
             filepath = self._out_dir.joinpath(filename)
             # Write the ByteStream content to the file
             bstream.to_file(filepath)

@@ -1,6 +1,9 @@
-from typing import List, Dict, Any
+import os
+from typing import Any
+from urllib.parse import urlparse
 from google.cloud import storage
 from haystack.dataclasses import Document
+from .utils import url_basename
 import json
 import re
 
@@ -22,17 +25,14 @@ class GCSDocumentStore:
     def _is_document_blob(self, blob_name: str) -> bool:
         return self._blob_pattern.match(blob_name) is not None
     
-    def _document_key(doc: Document) -> str:
-        doc_key = doc.meta['file_path']
-        if not doc_key:
-            raise ValueError("Document must have an 'id' field")
-        return doc_key
+    def _document_key(self, doc: Document) -> str:
+        return url_basename(doc.meta['url'])
 
     def count_documents(self, **kwargs) -> int:
         count = sum(1 for blob in self._bucket.list_blobs() if self._is_document_blob(blob.name))
         return count
 
-    def filter_documents(self, filters: Dict[str, Any], **kwargs) -> List[Dict[str, Any]]:
+    def filter_documents(self, filters: dict[str, Any], **kwargs) -> list[dict[str, Any]]:
         documents = []
         for blob in self._bucket.list_blobs():
             if self._is_document_blob(blob.name):
@@ -41,21 +41,21 @@ class GCSDocumentStore:
                     documents.append(doc_dict)
         return documents
 
-    def write_documents(self, documents: List[Dict[str, Any]], **kwargs) -> None:
+    def write_documents(self, documents: list[Document], **kwargs) -> None:
         for doc in documents:
             doc_key = self._document_key(doc)
             blob_name = self._get_blob_name(doc_key)
             blob = self._bucket.blob(blob_name)
             blob.upload_from_string(json.dumps(doc))
 
-    def delete_documents(self, doc_keys: List[str], **kwargs) -> None:
+    def delete_documents(self, doc_keys: list[str], **kwargs) -> None:
         for doc_key in doc_keys:
             blob_name = self._get_blob_name(doc_key)
             blob = self._bucket.blob(blob_name)
             if blob.exists():
                 blob.delete()
     
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "type": "GCSDocumentStore",
             "project_id": self._client.project,
@@ -63,7 +63,7 @@ class GCSDocumentStore:
         }
 
     @classmethod
-    def from_dict(cls, config: Dict[str, Any]) -> 'GCSDocumentStore':
+    def from_dict(cls, config: dict[str, Any]) -> 'GCSDocumentStore':
         return cls(
             project_id=config["project_id"],
             bucket_name=config["bucket_name"]

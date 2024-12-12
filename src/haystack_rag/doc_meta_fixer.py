@@ -18,5 +18,5 @@ class DocMetaFixer():
         url_by_path = { url_basename(x): x for x in origin_urls }
         for doc in documents:
             url = url_by_path[os.path.basename(doc.meta['file_path'])]
-            doc['url'] = url
+            doc.meta['url'] = url
         return documents

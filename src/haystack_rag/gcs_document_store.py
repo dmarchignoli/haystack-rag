@@ -45,8 +45,8 @@ class GCSDocumentStore:
             blob = self._bucket.get_blob(blob_name)
             candidates = [] if blob is None else [blob]
         else:
-            candidates = self._bucket.list_blobs() if blob is None else [blob]
-        for blob in candidate:
+            candidates = self._bucket.list_blobs()
+        for blob in candidates:
             if self._is_document_blob(blob.name):
                 doc_dict = json.loads(blob.download_as_string())
                 if ffield is None or doc_dict.get(ffield) == fvalue:

@@ -7,9 +7,9 @@ authors = [
 ]
 dependencies = [
     "haystack-ai>=2.7.0",
-    "sentence-transformers>=3.3.1",
-    "unstructured-fileconverter-haystack>=0.4.1",
     "google-cloud-storage>=2.19.0",
+    "pdfminer-six>=20240706",
+    "qdrant-haystack>=7.0.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.8"

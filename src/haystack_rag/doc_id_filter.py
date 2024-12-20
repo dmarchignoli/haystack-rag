@@ -14,5 +14,5 @@ class DocIdFilter():
     
     @component.output_types(documents=list[Document])
     def run(self, documents: list[Document], ids:list[str]) -> dict[str, list[Document]]:
-        filter_ids = {doc.id for doc in documents}
+        filter_ids = {id for id in ids}
         return {'documents': [doc for doc in documents if doc.id in filter_ids]}

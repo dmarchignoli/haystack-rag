@@ -12,7 +12,6 @@ class DocIdIndexer():
     def __init__(self):
         pass
     
-    @component.output_types(documents=dict[str, Document], ids=list[str])
-    def run(self, documents: list[Document]) -> dict[str, any]:
-        docs = { doc.id: doc for doc in documents }
-        return {'documents': docs, 'ids':list(docs.keys())}
+    @component.output_types(ids=list[str])
+    def run(self, documents: list[Document]) -> dict[str, list[str]]:
+        return {'ids': [doc.id for doc in documents]}

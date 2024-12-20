@@ -3,8 +3,6 @@ from haystack.dataclasses import Document
 from .utils import url_basename
 import os
 
-CACHE_SUBDIR = '.cache/haystack'
-
 @component
 class DocMetaFixer():
     """

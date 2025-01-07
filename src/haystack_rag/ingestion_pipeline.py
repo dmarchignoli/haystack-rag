@@ -49,7 +49,7 @@ def ingestion_pipeline(config: dict) -> Pipeline:
         project_id=gcs_config["project_id"],
         bucket_name=gcs_config["bucket_name"])
 
-    qdrant_config = config["qdrant_chunk_store"]
+    qdrant_config = config["qdrant_chunks_store"]
     chunks_store = QdrantDocumentStore(
         url=qdrant_config["url"],
         api_key = qdrant_config["api_key"],
